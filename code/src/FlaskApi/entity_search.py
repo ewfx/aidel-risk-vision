@@ -1,7 +1,10 @@
 from pymongo import MongoClient
 from rapidfuzz import fuzz
+from utils import clean_text, process_aliases
 
-def entity_db_search(collection_name, search_term, threshold=80):
+
+
+def entity_db_search(collection_name, search_term, threshold=80):    
     client = MongoClient('mongodb://localhost:27017')
     db = client['local']
     collection = db[collection_name]

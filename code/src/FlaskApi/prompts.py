@@ -1,3 +1,5 @@
+import json
+
 def generate_prompt(raw_data):
     """
     Generates a few-shot prompt that instructs the LLM to convert raw transaction data
@@ -224,3 +226,84 @@ Now, convert the following input into the canonical JSON format (remember to ext
 {raw_data}
     """
     return few_shot_prompt
+
+def generate_classification_prompt(extracted_entities, transaction_data):
+    """
+    Generates a prompt for an LLM to classify entities based on provided transaction data
+    and an enriched entities list.
+    
+    Parameters:
+      extracted_entities (list): A list of dictionaries containing enriched evidence data.
+      transaction_data (str): A string with the original transaction data.
+    
+    Returns:
+      str: A prompt for the LLM.
+    """
+    # Convert the enriched entities list to a JSON-formatted string for readability
+    entities_json = json.dumps(extracted_entities, indent=2)
+    
+    prompt = f"""
+You are an expert in financial entity classification and risk assessment. I will provide you with the original transaction data along with an enriched entities list. Based on the evidence provided, please classify each entity as follows:
+
+- For *companies*, choose one of the following classifications (only one allowed): 
+  - "Shell company"
+  - "Corporation"
+  - "NGO"
+
+- For *individuals*, you may assign one or both classifications:
+  - "PEP"
+  - "Criminal"
+  - "Intermediary"
+
+For each entity, provide a clear, concise justification that explains:
+- Which evidence was used (e.g., evidence from the PEP database, Criminal Entities database, offshore leaks, consolidated sanctions, news content, etc.)
+- How the risk flags (such as pep_flag, ce_flag, lei_flag for individuals; leaks_inter_flag, leaks_ent_flag, leaks_others_flag, cs_flag, ce_flag for companies) influenced your decision
+- Any relevant insights drawn from the news content (for companies) or additional notes
+
+Your task is to classify each entity based on the evidence provided and output the final result in a JSON list. Each element of the JSON list must be a dictionary with exactly the following keys:
+- "name": the entity's name.
+- "type": the classification result.
+   - For companies, choose one of: "Shell company", "Corporation", or "NGO".
+   - For individuals, you may assign one or both classifications: "PEP" and/or "Criminal". If both apply, output them as a comma-separated string.
+- "justification": a detailed explanation of the classification decision, referencing the evidence provided (e.g., evidence from PEP database, Criminal Entities database, offshore leaks, consolidated sanctions, news content, etc.) and how the respective risk flags influenced the decision.
+- "risk_score": a risk score has to be returned based on the evidence and the type of entity, transaction intermediaries, or companies. Only give the combined risk score, not the reasoning, not the various risk scores 
+    The complete risk score framework is below.
+      1.Sanctions Risk: Calculate based on the number and severity of sanctions listed for each company
+        a.50 if both companies have sanctions
+        b.30 if either company has sanctions
+        c.10 otherwise
+      2.Regulatory Risk: Assign a score (1-10) based on available data
+      3.Financial Risk: Assign a score (1-10) based on available data
+      4.Reputation Risk: Assign a score (1-10) based on available data
+      Total Risk Score (Get a combined risk score based on the above 4 factors, between 0 and 1): Calculate the sum of all risk scores
+- "confidence_score": Only return the score, not the reasoning behind it. Evaluate the reliability of the risk assessment based on:
+    1.Availability of relevant data
+    2.Recency of data sources
+    3.Reliability of data sources
+
+Risk Scoring Breakdown
+
+1. Regulatory or Legal Risks: Score based on indications of lawsuits, investigations, regulatory actions, fines, compliance failures, or SEC-related scrutiny.
+2. Financial Instability: Score based on contextual analysis of financial distress, bankruptcy risks, debt burdens, or cash flow issues.
+3. Market Reputation Risks: Score based on insights from semantic search regarding past controversies, negative public sentiment, media scrutiny, or brand damage.
+
+
+
+Below is the original transaction data:
+---------------------------------------------------
+{transaction_data.strip()}
+---------------------------------------------------
+
+Below is the enriched entities list:
+{entities_json}
+
+*Task:*
+1. For each entity in the enriched entities list:
+   - If the entity represents an individual, classify them as "PEP", "Criminal", or both (if applicable).
+   - If the entity represents a company, classify it as either "Shell company", "Corporation", or "NGO".
+2. For each classification, provide a detailed justification that references the evidence fields provided.
+3. Output the final classification and justification for each entity in a structured format.
+
+Please provide the final classification and justification for each entity.
+    """
+    return prompt

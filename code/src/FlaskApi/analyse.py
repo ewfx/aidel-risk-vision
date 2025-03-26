@@ -1,37 +1,58 @@
 import requests, json, re
 from pymongo import MongoClient
 from rapidfuzz import fuzz
-from newsapi import NewsApiClient
 from entity_extraction import extract_from_transaction_data
-from utils import clean_text, process_aliases
+from utils import clean_text, process_aliases, extract_json_from_backticks
+from individual import gather_evidence_on_individual
+from prompts import generate_classification_prompt
 
-unstructured_input = """Transaction ID: TXN-2023-5A9B
-Date: 2023-08-15 14:22:00
-Sender:
- - Name: "Digital Marketing Awards FZ LLC"
- - Account: IBAN CH56 0483 5012 346 7800 9 (Swiss bank)
- - Address: COMPASS BUILDING FDRK 2508, AL SHOHADA ROAD, AL HAMRA INDUSTRIAL ZONE-FZ, RAS AL KHAIMAH, ARE, United Arab Emirates
- - Notes: "Consulting fees for project Aurora led by Sanavbari Nikitenko"
-Receiver:
- - Name: "8808 HOLDING LIMITED"
- - Account: 987654321 (HongKong National Bank, Hong Kong)
- - Address: TWC MANAGEMENT LIMITED SUITE D; 19/F RITZ PLAZA122 AUSTIN ROADTSIM SHA TSUI; KOWLOON HONG KONG
- - Tax ID: HK-45678
-Amount: $49,860.00
-Currency Exchange: N/A
-Transaction Type: Wire Transfer
-Reference: "Charitable Donation - Ref #DR-2023-0815"
-Additional Notes:
- - "Urgent transfer approved by Mr. Trevor Prescod (India, prescod.trevor@gmail.com)."
- - "Transfer backed by Mr. Trevor Squirrell (US, tsquirrell@leg.state.vt.us)."
- - "Will further be taken care of by Mr. Corfiducia Anstalt (Liechtenstein)"
- - "Linked invoice missing. Processed via intermediary Quantum Holdings Ltd (BVI)."
- - Sender IP: 192.168.89.123 (VPN detected: NordVPN, exit node in Panama)"""
+def classify_with_llm(transaction_data, enriched_entities):
+    prompt = generate_classification_prompt(enriched_entities, transaction_data)
+    response = requests.post(
+        url="https://openrouter.ai/api/v1/chat/completions",
+        headers={
+        "Authorization": "Bearer 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",
+        "Content-Type": "application/json",
+        },
+        data=json.dumps({
+        "model": "nvidia/llama-3.1-nemotron-70b-instruct:free",
+        "messages": [
+            {
+            "role": "user",
+            "content": prompt,
+            "temperature":0.1
+            }
+        ],
+        })
+    )
+    return response
 
 
 def analyse(transaction_data):
     extracted_json = extract_from_transaction_data(unstructured_input)
     entities = extracted_json['entities']
+    
+    individuals = []
+    for x in entities:
+        if 'individual' in x['type']:
+            individuals.append(x)
+    for idx, individual in enumerate(individuals):
+        individual[idx]= gather_evidence_on_individual(individual)
 
-    client = MongoClient('mongodb://localhost:27017')
-    db = client['local']
+    companies = []
+    for x in entities:
+        if 'company' in x['type']:
+            companies.append(x.copy())
+
+    for idx, company in enumerate(companies):
+        companies[idx]= gather_evidence_on_individual(company)
+    
+    final_entities = individuals + companies
+
+    keys_to_remove = {'extracted_from', 'type', 'address', 'country', 'email', 'phone', 'note'}
+    for index, ent in enumerate(final_entities):
+        final_entities[index] = {k : v for k,v in ent.items() if k not in keys_to_remove}
+
+    res = classify_with_llm(unstructured_input, final_entities)
+    response_text = res.json()['choices'][0]['message']['content']
+    result = extract_json_from_backticks(response_text)
