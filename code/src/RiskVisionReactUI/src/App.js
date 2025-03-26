@@ -14,7 +14,6 @@ export default function App() {
       <div style={{marginTop:'15px'}}>
         <RiskAnalysisDashboard />
       </div>
-      <Processor/>
       <Footer/>
       </>
   );
