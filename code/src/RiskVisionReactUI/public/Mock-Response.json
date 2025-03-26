@@ -1,0 +1,38 @@
+{
+    "Transaction ID": "TXN-2023-5A9B",
+    "Extracted Entity": [
+        "Oceanic Holdings LLC",
+        "Bright Future Nonprofit Inc",
+        "Ali Al-Mansoori"
+    ],
+    "Entity Type": [
+        "Shell Company",
+        "NGO",
+        "PEP"
+    ],
+    "Risk Score": 0.95,
+    "Supporting Evidence": [
+        "Panama Papers Database",
+        "Sanctions List"
+    ],
+    "Confidence Score": 0.87,
+    "Reason": "Transaction involves payment from Swiss-based Global Horizons to Cayman Islands nonprofit, approved by PEP-linked Ali Al-Mansoori",
+    "steps": [
+        "Entities extracted from the transaction data: ['Global Horizons Consulting LLC', 'Sanavbari Nikitenko']",
+        {
+            "Global Horizons Consulting LLC": {
+                "Leaks": "Found in Panama Papers",
+                "Consolidated-Sanctions": "Ukraine NSDC State Register of Sanctions",
+                "Criminal-entities": "No criminal activity found",
+                "News": "Browsed through the news and no recent relevant news found"
+            },
+            "Sanavbari Nikitenko": {
+                "PEP": "Found in PEP database",
+                "Leaks": "Found in Panama Papers as an intermediary currently ACTIVE in Ukraine",
+                "Criminal-entities": "Red Notice - participation in the activity of a terrorist organization; participation in the activity of an illegal armed formation"
+            }
+        },
+        "Classified entities as ['Shell Company', 'PEP']",
+        "Risk score and confidence score calculated are 0.95, 0.8"
+    ]
+}
