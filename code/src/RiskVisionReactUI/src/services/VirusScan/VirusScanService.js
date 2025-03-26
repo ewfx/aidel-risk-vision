@@ -6,7 +6,7 @@ export const scanFile = async (file) => {
     method: 'POST',
     body: formData,
     headers: {
-      'x-apikey': 'YOUR_VIRUSTOTAL_API_KEY_HERE'
+      'x-apikey': 'cbfd5a4712c711b9d413eaed94ef41bdf28c74c5cff8e8852e05e4efe06aa10d'
     }
   });
 

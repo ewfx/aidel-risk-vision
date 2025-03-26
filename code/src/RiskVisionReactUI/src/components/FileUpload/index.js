@@ -3,7 +3,7 @@ import { Box, Button, Typography, List, ListItem, ListItemText, TextField, Circu
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import axios from "axios";
 
-const FileUpload = () => {
+const FileUpload = ({handleTransactionDataUpdate}) => {
     const [files, setFiles] = useState([]);
     const [textInput, setTextInput] = useState("");
     const [uploading, setUploading] = useState(false);
@@ -33,9 +33,11 @@ const FileUpload = () => {
 
         try {
             setUploading(true);
-            const response = await axios.post("http://127.0.0.1:5000/process", formData, {
+            const response = await axios.post("http://127.0.0.1:5000/jsonortext", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
+
+            handleTransactionDataUpdate(response);
 
             alert("Processing successful!");
             console.log(response.data);
