@@ -1,13 +1,21 @@
-import logo from './logo.svg';
+import React from 'react';
+import UploadForm from './components/UploadForm';
+import Header from './components/Header'
+import Footer from './components/Footer';
+import RiskAnalysisDashboard from './components/Dashboard/RiskAnalysisDashboard'
+import Processor from './components/Processor';
 import './App.css';
-import Home from './components/Home';
 
-function App() {
+export default function App() {
   return (
-    <div>
-      <Home />
-    </div>
+   <>
+      <Header />
+      <UploadForm />
+      <div style={{marginTop:'15px'}}>
+        <RiskAnalysisDashboard />
+      </div>
+      <Processor/>
+      <Footer/>
+      </>
   );
 }
-
-export default App;
