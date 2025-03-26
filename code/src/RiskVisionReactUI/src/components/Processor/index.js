@@ -112,7 +112,8 @@ export default function StepperComponent({ steps = [] }) {
                             const isExpanded = expandedSteps.includes(index);
 
                             const now = Date.now();
-                            const durationSec = Math.floor((now - timestamps[index]) / 1000);
+                            let durationSec = Math.floor((now - timestamps[index]) / 1000);
+                            durationSec = 8;
                             const duration = `${durationSec}s`;
 
                             let statusIndex = retryingStep === index ? 1 : index === steps.length - 1 ? 1 : index < steps.length - 1 ? 0 : 2;
