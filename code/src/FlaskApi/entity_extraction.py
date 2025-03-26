@@ -1,12 +1,12 @@
 import requests, json, re
 from prompts import generate_prompt
 
-def extract_with_llm(raw_data):
+def extract_with_llm1(raw_data):
   prompt = generate_prompt(raw_data)
   response = requests.post(
     url="https://openrouter.ai/api/v1/chat/completions",
     headers={
-      "Authorization": "Bearer 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",
+      "Authorization": "Bearer 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",
       "Content-Type": "application/json",
     },
     data=json.dumps({
@@ -40,10 +40,12 @@ def extract_canonical_json(response_text):
         raise ValueError("Failed to parse extracted JSON.") from e
 
 def extract_from_transaction_data(transaction_data):
+  print(transaction_data)
   retries = 3
   while retries > 0:
     try:
-      res = extract_with_llm(transaction_data)
+      res = extract_with_llm1(transaction_data)
+      print(res.json())
       response_text = res.json()['choices'][0]['message']['content']
       result = extract_canonical_json(response_text)
       break

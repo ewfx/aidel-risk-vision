@@ -77,7 +77,7 @@ def gather_leaks_indi_evidence(individual):
             lei_flag = 0
         else:
             if 'country' in fields:
-                sources = ()
+                sources = []
                 for result in results:
                     doc = result[0]
                     if 'countries' in doc.keys() and individual['country'].lower() in doc['countries'].lower():
@@ -88,10 +88,10 @@ def gather_leaks_indi_evidence(individual):
                         lei_flag = 3
                         break
                     else:
-                        sources.add(doc["sourceID"])
+                        sources.append(doc["sourceID"])
                 if lei_flag!=3:
                     # sources_string = ', '.join(sources)
-                    lei_evidence = f"Individual's name found in {', '.join(sources)} but country doesn't match"
+                    lei_evidence = f"Individual's name found in {', '.join(list(set(sources)))} but country doesn't match"
                     lei_flag = 2
             else:
                 lei_evidence = f"Individual's name found in {doc["sourceID"]} but no additional data such as country to confirm"

@@ -228,19 +228,31 @@ Now, convert the following input into the canonical JSON format (remember to ext
     return few_shot_prompt
 
 def generate_classification_prompt(extracted_entities, transaction_data):
-    """
-    Generates a prompt for an LLM to classify entities based on provided transaction data
-    and an enriched entities list.
-    
-    Parameters:
-      extracted_entities (list): A list of dictionaries containing enriched evidence data.
-      transaction_data (str): A string with the original transaction data.
-    
-    Returns:
-      str: A prompt for the LLM.
-    """
-    # Convert the enriched entities list to a JSON-formatted string for readability
-    entities_json = json.dumps(extracted_entities, indent=2)
+    # entities_json = json.dumps(extracted_entities, indent=2)
+
+#     example_extracted_entities = [{'name': 'Sanavbari Nikitenko',
+#   'pep_evidence': 'Name not found in PEP database',
+#   'pep_flag': 0,
+#   'pep_notes': None,
+#   'ce_evidence': 'Individual found in Criminal Entities database with a perfect match',
+#   'ce_flag': 3,
+#   'ce_notes': '"Red Notice - participation in the activity of a terrorist organization; participation in the activity of an illegal armed formation"',
+#   'lei_evidence': 'Individual not found in any of the Panama Papers, Paradise Papers, or Bahamas Leaks',
+#   'lei_flag': 0},
+#  {'name': 'Quantum Holdings Ltd',
+#   'leaks_inter_evidence': 'Company name found in  but no additional data such as country to confirm',
+#   'leaks_inter_flag': 1,
+#   'leaks_ent_evidence': 'Company name found in  but no additional data such as address to confirm',
+#   'leaks_ent_flag': 1,
+#   'leaks_others_evidence': 'Company name found in  but no additional data such as country to confirm',
+#   'leaks_others_flag': 1,
+#   'cs_evidence': 'Company not found in Consolidated Sanctions database',
+#   'cs_flag': 0,
+#   'cs_notes': None,
+#   'ce_evidence': 'Company found in Criminal Entities database but not a perfect name match',
+#   'ce_flag': 2,
+#   'ce_notes': 'Reciprocal - 2023-12-11',
+#   'news_content': 'Title: Signaturefd LLC Increases Stock Holdings in Nano-X Imaging Ltd. (NASDAQ:NNOX)\nDescription: Signaturefd LLC grew its holdings in shares of Nano-X Imaging Ltd. (NASDAQ:NNOX – Free Report) by 164.6% during the fourth quarter, according to its most recent Form 13F filing with the Securities and Exchange Commission (SEC). The firm owned 10,391 shares of…\n\nTitle: Victory Capital Management Inc. Buys 5,960 Shares of Rigetti Computing, Inc. (NASDAQ:RGTI)\nDescription: Victory Capital Management Inc. lifted its stake in Rigetti Computing, Inc. (NASDAQ:RGTI – Free Report) by 31.1% during the 4th quarter, according to its most recent disclosure with the Securities & Exchange Commission. The firm owned 25,145 shares of the com…\n\n'}]
     
     prompt = f"""
 You are an expert in financial entity classification and risk assessment. I will provide you with the original transaction data along with an enriched entities list. Based on the evidence provided, please classify each entity as follows:
@@ -266,6 +278,8 @@ Your task is to classify each entity based on the evidence provided and output t
    - For companies, choose one of: "Shell company", "Corporation", or "NGO".
    - For individuals, you may assign one or both classifications: "PEP" and/or "Criminal". If both apply, output them as a comma-separated string.
 - "justification": a detailed explanation of the classification decision, referencing the evidence provided (e.g., evidence from PEP database, Criminal Entities database, offshore leaks, consolidated sanctions, news content, etc.) and how the respective risk flags influenced the decision.
+
+For overall risk assessment, you need to provide two fields (combined for all the entities and transaction):
 - "risk_score": a risk score has to be returned based on the evidence and the type of entity, transaction intermediaries, or companies. Only give the combined risk score, not the reasoning, not the various risk scores 
     The complete risk score framework is below.
       1.Sanctions Risk: Calculate based on the number and severity of sanctions listed for each company
@@ -287,6 +301,24 @@ Risk Scoring Breakdown
 2. Financial Instability: Score based on contextual analysis of financial distress, bankruptcy risks, debt burdens, or cash flow issues.
 3. Market Reputation Risks: Score based on insights from semantic search regarding past controversies, negative public sentiment, media scrutiny, or brand damage.
 
+Output structure:
+[[{{
+    "name": <entity_name1>,
+    "type": <entity_type1>,
+    "justification": <detailed_justification_for_classification_of_entity_1>
+}},
+{{
+    "name": <entity_name2>,
+    "type": <entity_type2>,
+    "justification": <detailed_justification_for_classification_of_entity_2>s
+}}],
+{{
+    "risk_score": <risk_score>,
+    "confidence_score": <confidence_score>,
+    "risk_score_justification": <justification for risk score>,
+    "confidence_score_justification": <justification for confidence score>
+}}
+]
 
 
 Below is the original transaction data:
@@ -295,7 +327,7 @@ Below is the original transaction data:
 ---------------------------------------------------
 
 Below is the enriched entities list:
-{entities_json}
+{extracted_entities}
 
 *Task:*
 1. For each entity in the enriched entities list:

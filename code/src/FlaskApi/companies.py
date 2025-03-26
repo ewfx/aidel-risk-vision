@@ -11,7 +11,7 @@ def gather_leaks_company_evidence(company):
         leaks_ent_evidence = 'Company not found in any of the Panama Papers, Paradise Papers, or Bahamas Leaks'
         leaks_ent_flag = 0
     else:
-        sources = ()
+        sources = []
         if 'country' in fields:
             for result in results:
                 doc = result[0]
@@ -20,9 +20,9 @@ def gather_leaks_company_evidence(company):
                     leaks_ent_flag = 2
                     break
                 else:
-                    sources.add(doc["sourceID"])
+                    sources.append(doc["sourceID"])
             if leaks_ent_flag!=2:
-                leaks_ent_evidence = f'Company name found in {', '.join(sources)} but country does not match'
+                leaks_ent_evidence = f'Company name found in {', '.join(list(set(sources)))} but country does not match'
                 leaks_ent_flag = 1
         if 'address' in fields:
             for result in results:
@@ -32,12 +32,12 @@ def gather_leaks_company_evidence(company):
                     leaks_ent_flag = 3
                     break
                 else:
-                    sources.add(doc["sourceID"])
+                    sources.append(doc["sourceID"])
             if leaks_ent_flag!=3:
-                leaks_ent_evidence = f'Company name found in {', '.join(sources)} but address does not match'
+                leaks_ent_evidence = f'Company name found in {', '.join(list(set(sources)))} but address does not match'
                 leaks_ent_flag = 1
         else:
-            leaks_ent_evidence = f'Company name found in {', '.join(sources)} but no additional data such as address to confirm'
+            leaks_ent_evidence = f'Company name found in {', '.join(list(set(sources)))} but no additional data such as address to confirm'
             leaks_ent_flag = 1
     # Leaks-intermediaries
     results = entity_db_search("Leaks-intermediaries", name)
@@ -46,21 +46,24 @@ def gather_leaks_company_evidence(company):
         leaks_inter_evidence = 'Company not found in any of the Panama Papers, Paradise Papers, or Bahamas Leaks'
         leaks_inter_flag = 0
     else:
-        sources = ()
+        sources = []
         if 'country' in fields:
             for result in results:
                 doc = result[0]
                 if 'countries' in doc.keys() and company['country'].lower() in doc['countries'].lower():
-                    leaks_inter_evidence = f'Company name found in {doc["sourceID"]} and is an intermediary currently {doc['status']} in {doc["countries"]}'
+                    if 'status' in doc.keys():
+                        leaks_inter_evidence = f'Company name found in {doc["sourceID"]} and is an intermediary currently {doc['status']} in {doc["countries"]}'
+                    else:
+                        leaks_inter_evidence = f'Company name found in {doc["sourceID"]} and is an intermediary in {doc["countries"]}'
                     leaks_inter_flag = 2
                     break
                 else:
-                    sources.add(doc["sourceID"])
+                    sources.append(doc["sourceID"])
             if leaks_inter_flag!=2:
-                leaks_inter_evidence = f'Company name found in {', '.join(sources)} but country does not match'
+                leaks_inter_evidence = f'Company name found in {', '.join(list(set(sources)))} but country does not match'
                 leaks_inter_flag = 1
         else:
-            leaks_inter_evidence = f'Company name found in {', '.join(sources)} but no additional data such as country to confirm'
+            leaks_inter_evidence = f'Company name found in {', '.join(list(set(sources)))} but no additional data such as country to confirm'
             leaks_inter_flag = 1
     # Leaks-others
     results = entity_db_search("Leaks-others", name)
@@ -69,7 +72,7 @@ def gather_leaks_company_evidence(company):
         leaks_others_evidence = 'Company not found in any of the Panama Papers, Paradise Papers, or Bahamas Leaks'
         leaks_others_flag = 0
     else:
-        sources = ()
+        sources = []
         if 'country' in fields:
             for result in results:
                 doc = result[0]
@@ -78,12 +81,12 @@ def gather_leaks_company_evidence(company):
                     leaks_others_flag = 2
                     break
                 else:
-                    sources.add(doc["sourceID"])
+                    sources.append(doc["sourceID"])
             if leaks_others_flag!=2:
-                leaks_others_evidence = f'Company name found in {', '.join(sources)} but country does not match'
+                leaks_others_evidence = f'Company name found in {', '.join(list(set(sources)))} but country does not match'
                 leaks_others_flag = 1
         else:
-            leaks_others_evidence = f'Company name found in {', '.join(sources)} but no additional data such as country to confirm'
+            leaks_others_evidence = f'Company name found in {', '.join(list(set(sources)))} but no additional data such as country to confirm'
             leaks_others_flag = 1
     return leaks_inter_evidence, leaks_inter_flag, leaks_ent_evidence, leaks_ent_flag, leaks_others_evidence, leaks_others_flag
 
