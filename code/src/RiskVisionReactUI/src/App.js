@@ -11,13 +11,14 @@ export default function App() {
 
   const handleTransactionDataUpdate = (txData) => {
     setTransactionDataResponse(txData);
+    console.log("In App", txData);
   }
   return (
    <>
       <Header />
       <UploadForm handleTransactionDataUpdate={handleTransactionDataUpdate}/>
       <div style={{marginTop:'15px'}}>
-        <RiskAnalysisDashboard transactionData={transactionDataResponse}/>
+        <RiskAnalysisDashboard transactionDataResponse={transactionDataResponse}/>
       </div>
       <Footer/>
       </>

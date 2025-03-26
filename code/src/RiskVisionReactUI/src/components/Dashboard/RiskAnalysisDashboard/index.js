@@ -33,8 +33,11 @@ const RiskAnalysisDashboard = ({transactionDataResponse}) => {
     //         .catch(console.error);
     // }, []);
 
-    if (!transactionDataResponse) return <Typography>Your result appears here once you have uploaded transaction data.</Typography>;
+    const isEmpty = !transactionDataResponse || Object.keys(transactionDataResponse).length === 0;
 
+    if (isEmpty) {
+      return <Typography>Your result appears here once you have uploaded transaction data.</Typography>;
+    }
     return (
         <div>
             <Grid container direction="row" spacing={2} className="p-4">

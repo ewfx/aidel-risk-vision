@@ -24,12 +24,17 @@ const RawInput = ({handleTransactionDataUpdate}) => {
 
     try {
         // setUploading(true);
-        await axios.post("http://127.0.0.1:5000/jsonortext", formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-        }).then((res) => {
-          handleTransactionDataUpdate(res);
-          alert("Processing successful!");
-        });
+        // await axios.post("http://127.0.0.1:5000/jsonortext", formData, {
+        //     headers: { "Content-Type": "multipart/form-data" },
+        // }).then((res) => {
+        //   handleTransactionDataUpdate(res);
+        //   alert("Processing successful!");
+        // });
+        
+        fetch("/Mock-Response.json")
+            .then(res => res.json())
+            .then((r) => handleTransactionDataUpdate(r))
+            .catch(console.error);
     } catch (error) {
         alert("Error processing input");
         console.error("Processing error:", error);
