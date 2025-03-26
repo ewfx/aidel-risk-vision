@@ -1,0 +1,36 @@
+.input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+}
+
+.raw-input {
+  width: 90%;
+  background-color: white !important;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  width: 90%;
+  margin-top: 10px;
+  gap: 10px;
+}
+
+/* Teal outline for Beautify button */
+.beautify-button {
+  color: teal !important;
+  border: 2px solid teal !important;
+}
+
+/* Teal background for Send button */
+.send-button {
+  background-color: teal !important;
+  color: white !important;
+}
+
+.send-button:hover {
+  background-color: #00796b !important;
+}

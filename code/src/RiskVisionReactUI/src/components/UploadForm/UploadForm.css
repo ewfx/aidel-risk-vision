@@ -1,0 +1,54 @@
+.upload-form {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  /* max-width: 500px; */
+  margin: auto;
+  text-align: center;
+}
+
+.radio-group {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.radio-option {
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #e0f2f1;
+  color: #00796b;
+  font-weight: 500;
+}
+
+.radio-option.active {
+  background-color: #00796b;
+  color: white;
+}
+
+.input-section {
+  margin-top: 15px;
+}
+
+.send-button-container {
+  margin-top: 20px;
+}
+
+.send-button {
+  background-color: #00796b;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.send-button:hover {
+  background-color: #004d40;
+}
