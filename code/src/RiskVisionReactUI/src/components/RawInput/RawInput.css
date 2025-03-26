@@ -1,35 +1,36 @@
+.input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+}
+
 .raw-input {
-    width: 100%;
-    height: 10rem;
-    padding: 0.75rem;
-    border-radius: 0.375rem;
-    /* background-color: #111827; */
-    color: #111827;
-    font-size: 0.875rem;
-    font-family: monospace;
-    border: 1px solid #374151;
-    resize: vertical;
-  }
-  
-  .beautify-button {
-    margin-top: 0.5rem;
-    background-color: #00796b;
-    color: white;
-    padding: 0.4rem 0.75rem;
-    border-radius: 0.375rem;
-    font-weight: 500;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .beautify-button:hover {
-    background-color: #22c55e;
-  }
-  
-  .error-text {
-    margin-top: 0.5rem;
-    color: #f87171;
-    font-size: 0.875rem;
-  }
-  
+  width: 90%;
+  background-color: white !important;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  width: 90%;
+  margin-top: 10px;
+  gap: 10px;
+}
+
+/* Teal outline for Beautify button */
+.beautify-button {
+  color: teal !important;
+  border: 2px solid teal !important;
+}
+
+/* Teal background for Send button */
+.send-button {
+  background-color: teal !important;
+  color: white !important;
+}
+
+.send-button:hover {
+  background-color: #00796b !important;
+}

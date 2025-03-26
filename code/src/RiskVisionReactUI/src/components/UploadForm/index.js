@@ -21,7 +21,7 @@ const UploadForm = () => {
   return (
     <div className="upload-form">
       <div className="radio-group">
-        {['file-upload', 'json'].map((m) => (
+        {['Upload or Free Text', 'json'].map((m) => (
           <label
             key={m}
             className={`radio-option ${mode === m ? 'active' : ''}`}
@@ -39,13 +39,11 @@ const UploadForm = () => {
       </div>
 
       <div className="input-section">
-        {mode === 'file-upload' && <FileInput binary={false} />}
+        {mode === 'Upload or Free Text' && <FileInput binary={false} />}
         {mode === 'json' && <RawInput />}
       </div>
 
-      {/* <div className="send-button-container">
-        <button className="send-button" onClick={handleSend}>Send</button>
-      </div> */}
+     
     </div>
   );
 };
