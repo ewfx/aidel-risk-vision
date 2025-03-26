@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { use, useState } from 'react';
 import UploadForm from './components/UploadForm';
 import Header from './components/Header'
 import Footer from './components/Footer';
@@ -7,12 +7,17 @@ import Processor from './components/Processor';
 import './App.css';
 
 export default function App() {
+  const [transactionDataResponse, setTransactionDataResponse] = useState({});
+
+  const handleTransactionDataUpdate = (txData) => {
+    setTransactionDataResponse(txData);
+  }
   return (
    <>
       <Header />
-      <UploadForm />
+      <UploadForm handleTransactionDataUpdate={handleTransactionDataUpdate}/>
       <div style={{marginTop:'15px'}}>
-        <RiskAnalysisDashboard />
+        <RiskAnalysisDashboard transactionData={transactionDataResponse}/>
       </div>
       <Footer/>
       </>

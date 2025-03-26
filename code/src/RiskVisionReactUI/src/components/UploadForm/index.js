@@ -3,20 +3,20 @@ import FileInput from '../FileInput';
 import RawInput from '../RawInput';
 import './UploadForm.css';
 
-const UploadForm = () => {
+const UploadForm = ({handleTransactionDataUpdate}) => {
   const [mode, setMode] = useState('none');
 
-  const handleSend = () => {
-    console.log('Sending request to dummy API...');
-    fetch('https://jsonplaceholder.typicode.com/posts', {
-      method: 'POST',
-      body: JSON.stringify({ message: 'Sending data...' }),
-      headers: { 'Content-Type': 'application/json' },
-    })
-      .then((res) => res.json())
-      .then((data) => alert('Sent: ' + JSON.stringify(data)))
-      .catch((err) => alert('Error: ' + err.message));
-  };
+  // const handleSend = () => {
+  //   console.log('Sending request to dummy API...');
+  //   fetch('https://jsonplaceholder.typicode.com/posts', {
+  //     method: 'POST',
+  //     body: JSON.stringify({ message: 'Sending data...' }),
+  //     headers: { 'Content-Type': 'application/json' },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => alert('Sent: ' + JSON.stringify(data)))
+  //     .catch((err) => alert('Error: ' + err.message));
+  // };
 
   return (
     <div className="upload-form">
@@ -39,8 +39,8 @@ const UploadForm = () => {
       </div>
 
       <div className="input-section">
-        {mode === 'Upload or Free Text' && <FileInput binary={false} />}
-        {mode === 'json' && <RawInput />}
+        {mode === 'Upload or Free Text' && <FileInput binary={false} handleTransactionDataUpdate={handleTransactionDataUpdate}/>}
+        {mode === 'json' && <RawInput handleTransactionDataUpdate={handleTransactionDataUpdate}/>}
       </div>
 
      

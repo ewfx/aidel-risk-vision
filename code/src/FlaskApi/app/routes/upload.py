@@ -40,7 +40,7 @@ def upload_file():
         return jsonify({"error": str(e)}), 500
     
 
-@bp.route('/process', methods=['POST'])
+@bp.route('/jsonortext', methods=['POST'])
 def process_input():
     if request.is_json:
         data = request.get_json()

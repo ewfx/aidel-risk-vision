@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Button, TextField } from '@mui/material';
 import './RawInput.css';
+import axios from 'axios';
 
-const RawInput = () => {
+const RawInput = ({handleTransactionDataUpdate}) => {
   const [rawText, setRawText] = useState('');
   const [error, setError] = useState('');
 
@@ -16,6 +17,26 @@ const RawInput = () => {
       setError('Invalid JSON. Please fix the syntax.');
     }
   };
+
+  const handleUpload = async () => {
+    const formData = new FormData();
+    formData.append("textInput", rawText);
+
+    try {
+        // setUploading(true);
+        await axios.post("http://127.0.0.1:5000/jsonortext", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        }).then((res) => {
+          handleTransactionDataUpdate(res);
+          alert("Processing successful!");
+        });
+    } catch (error) {
+        alert("Error processing input");
+        console.error("Processing error:", error);
+    } finally {
+        setRawText("");
+    }
+};
 
   return (
     <div className="input-container">
@@ -38,7 +59,7 @@ const RawInput = () => {
         <Button variant="outlined" className="beautify-button" onClick={handleBeautify}>
           Beautify
         </Button>
-        <Button variant="contained" className="send-button">
+        <Button variant="contained" className="send-button" onClick={handleUpload}>
           Send
         </Button>
       </div>

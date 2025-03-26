@@ -23,17 +23,17 @@ const cardStyle = {
     borderRadius: '8px'
 };
 
-const RiskAnalysisDashboard = () => {
-    const [transactionData, setTransactionData] = useState(null);
+const RiskAnalysisDashboard = ({transactionDataResponse}) => {
+    // const [transactionData, setTransactionData] = useState(null);
 
-    useEffect(() => {
-        fetch("/Mock-Response.json")
-            .then(res => res.json())
-            .then(setTransactionData)
-            .catch(console.error);
-    }, []);
+    // useEffect(() => {
+    //     fetch("/Mock-Response.json")
+    //         .then(res => res.json())
+    //         .then(setTransactionData)
+    //         .catch(console.error);
+    // }, []);
 
-    if (!transactionData) return <Typography>Loading dashboard...</Typography>;
+    if (!transactionDataResponse) return <Typography>Your result appears here once you have uploaded transaction data.</Typography>;
 
     return (
         <div>
@@ -42,7 +42,7 @@ const RiskAnalysisDashboard = () => {
                     <Card style={cardStyle}>
                         <CardContent>
                             <h2 className="text-xl font-semibold">Risk Score</h2>
-                            <RiskMeterChart riskScore={transactionData["Risk Score"] * 100} />
+                            <RiskMeterChart riskScore={transactionDataResponse["Risk Score"] * 100} />
                         </CardContent>
                     </Card>
                 </Grid>
@@ -51,7 +51,7 @@ const RiskAnalysisDashboard = () => {
                     <Card style={cardStyle}>
                         <CardContent>
                             <h2 className="text-xl font-semibold">Risk Confidence</h2>
-                            <LinearRiskMeterChart confidenceScore={transactionData["Confidence Score"] * 100} />
+                            <LinearRiskMeterChart confidenceScore={transactionDataResponse["Confidence Score"] * 100} />
                         </CardContent>
                     </Card>
                 </Grid>
@@ -62,15 +62,15 @@ const RiskAnalysisDashboard = () => {
                             <h2 className="text-xl font-semibold">
                                 Risk Transaction
                                 <Typography component="span" variant="subtitle2" sx={{ ml: 1, color: 'gray' }}>
-                                    ({transactionData["Transaction ID"]})
+                                    ({transactionDataResponse["Transaction ID"]})
                                 </Typography>
                             </h2>
-                            <TransactionDetails transaction={transactionData} />
+                            <TransactionDetails transaction={transactionDataResponse} />
                         </CardContent>
                     </Card>
                 </Grid>
             </Grid>
-            <Processor steps={transactionData.steps} />
+            <Processor steps={transactionDataResponse.steps} />
         </div>
     );
 };
