@@ -26,3 +26,14 @@ def extract_json_from_backticks(response_text):
     else:
         print("No JSON block found between triple backticks.")
         return None
+    
+def extract_json_objects(text):
+    pattern = r"```json\s*(.*?)\s*```"
+    json_strs = re.findall(pattern, text, re.DOTALL)
+    json_objects = []
+    for js in json_strs:
+        try:
+            json_objects.append(json.loads(js))
+        except json.JSONDecodeError as e:
+            print("Error decoding JSON:", e)
+    return json_objects

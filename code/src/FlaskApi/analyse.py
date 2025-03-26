@@ -2,7 +2,7 @@ import requests, json, re
 from pymongo import MongoClient
 from rapidfuzz import fuzz
 from entity_extraction import extract_from_transaction_data
-from utils import clean_text, process_aliases, extract_json_from_backticks
+from utils import clean_text, process_aliases, extract_json_from_backticks, extract_json_objects
 from individual import gather_evidence_on_individual
 from prompts import generate_classification_prompt
 
@@ -29,7 +29,7 @@ def classify_with_llm(transaction_data, enriched_entities):
 
 
 def analyse(transaction_data):
-    extracted_json = extract_from_transaction_data(unstructured_input)
+    extracted_json = extract_from_transaction_data(transaction_data)
     entities = extracted_json['entities']
     
     individuals = []
@@ -53,6 +53,15 @@ def analyse(transaction_data):
     for index, ent in enumerate(final_entities):
         final_entities[index] = {k : v for k,v in ent.items() if k not in keys_to_remove}
 
-    res = classify_with_llm(unstructured_input, final_entities)
+    res = classify_with_llm(transaction_data, final_entities)
     response_text = res.json()['choices'][0]['message']['content']
-    result = extract_json_from_backticks(response_text)
+    final_json = extract_json_objects(response_text)
+    result_json = {}
+    result_json['Transaction ID'] = extracted_json['transaction_id']
+    result_json['Extracted Entity'] = [x['name'] for x in final_json[0]]
+    result_json['Entity Types'] = [x['type'] for x in final_json[0]]
+    result_json['Risk Score'] = final_json[1]['risk_score']
+    result_json['Confidence Score'] = final_json[1]['confidence_score']
+    result_json['Supporting Evidence'] = [x['justification'] for x in final_json[0]]
+    result_json['Reason'] = extracted_json['risk_evaluation']
+    return result_json

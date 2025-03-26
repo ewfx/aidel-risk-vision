@@ -66,9 +66,11 @@ def upload_file():
 def process_input():
     if request.is_json:
         data = request.get_json()
+        analyse(data)
         print("JSON"+data)
     else:
         data = request.data.decode('utf-8')
+        analyse(data)
         print("TEXT"+data)
     
     # Process the input (optional, for now, we just return success)
