@@ -38,3 +38,15 @@ def upload_file():
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+@bp.route('/process', methods=['POST'])
+def process_input():
+    if request.is_json:
+        data = request.get_json()
+        print("JSON"+data)
+    else:
+        data = request.data.decode('utf-8')
+        print("TEXT"+data)
+    # Process the input (optional, for now, we just return success)
+    return jsonify(success=True)
