@@ -44,9 +44,7 @@ The system processes input in the form of files, text, or JSON via a Flask API. 
 - **Backend**: Flask (Python)
 - **LLM**: OpenAI API / Llama / Local LLM
 - **Databases**:
-  - Relational DB (PostgreSQL / MySQL) for transaction storage
   - NoSQL (MongoDB) for entity lookups
-  - Elasticsearch for news-related search
 - **External APIs**:
   - PEP/Crime Databases
   - News Aggregation APIs
